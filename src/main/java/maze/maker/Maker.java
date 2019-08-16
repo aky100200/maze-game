@@ -16,95 +16,11 @@ public class Maker {
     }
 
     public void make() {
-        baseMake();
-        //棒倒し法で作成
-        for (int i = 2; i < board.length; i = i + 2) {
-            for (int j = 2; j < board.length; j = j + 2) {
-                String point = board[i][j];
-                if (Objects.equals(point, ROAD)) {
-                    continue;
-                }
-                if (i == 2) {
-                    //壁がある場所には倒せない
-                    while (true) {
-                        //4方向にランダムで壁を作成
-                        int r = rand.nextInt(4);
-                        switch (r) {
-                            case 0:
-                                if (Objects.equals(board[i - 1][j], WALL)) {
-                                    continue;
-                                }
-                                board[i - 1][j] = WALL;
-                                break;
-                            case 1:
-                                if (Objects.equals(board[i][j - 1], WALL)) {
-                                    continue;
-                                }
-                                board[i][j - 1] = WALL;
-                                break;
-                            case 2:
-                                if (i + 1 == board.length || Objects.equals(board[i + 1][j], WALL)) {
-                                    continue;
-                                }
-                                board[i + 1][j] = WALL;
-                                break;
-                            default:
-                                if (j + 1 == board[i].length || Objects.equals(board[i][j + 1], WALL)) {
-                                    continue;
-                                }
-                                board[i][j + 1] = WALL;
-                                break;
-                        }
-                        break;
-                    }
-                } else {
-                    //3方向にランダムで壁を作成
-                    //壁がある場所には倒せない
-                    boolean flg = false;
-                    while (!flg) {
-                        //4方向にランダムで壁を作成
-                        int r = rand.nextInt(3);
-                        try {
-                            switch (r) {
-                                case 0:
-                                    String p = board[i][j - 1];
-                                    if (Objects.equals(p, WALL)) {
-                                        continue;
-                                    }
-                                    board[i][j - 1] = WALL;
-                                    flg = true;
-                                    break;
-                                case 1:
-                                    p = board[i + 1][j];
-                                    if (Objects.equals(p, WALL)) {
-                                        continue;
-                                    }
-                                    board[i + 1][j] = WALL;
-                                    flg = true;
-                                    break;
-                                default:
-                                    p = board[i][j + 1];
-                                    if (Objects.equals(p, WALL)) {
-                                        continue;
-                                    }
-                                    board[i][j + 1] = WALL;
-                                    flg = true;
-                                    break;
-                            }
-                        } catch (Throwable t) {
-                            break;
-                        }
-                    }
-                }
-            }
-            board[0][1] = "Ｓ";
-            board[board.length - 1][board[board.length - 1].length - 2] = "Ｇ";
-        }
-
+        makeBase();
+        makeWall();
     }
 
-    private void baseMake() {
-        //外壁と1マス飛ばしで内壁を作成
+    private void makeBase() {
         for (int i = 0; i < board.length; i++) {
             int ix = i;
             if (i == 0 || i == (board.length - 1)) {
@@ -123,6 +39,42 @@ public class Maker {
         }
     }
 
+    private void makeWall() {
+        for (int i = 2; i < board.length - 1; i = i + 2) {
+            for (int j = 2; j < board.length - 1; j = j + 2) {
+                //最初の行以外は上方向へ壁を作成できない
+                int bound = i == 2 ? 4 : 3;
+                while (true) {
+                    int ii = i;
+                    int jj = j;
+                    switch (rand.nextInt(bound)) {
+                        case 0:
+                            ii = i + 1;
+                            break;
+                        case 1:
+                            jj = j + 1;
+                            break;
+                        case 2:
+                            jj = j - 1;
+                            break;
+                        default:
+                            ii = i - 1;
+                            break;
+                    }
+                    if (ii == board.length
+                            || jj == board[i].length
+                            || Objects.equals(board[ii][jj], WALL)) {
+                        continue;
+                    }
+                    board[ii][jj] = WALL;
+                    break;
+                }
+            }
+            board[0][1] = "Ｓ";
+            board[board.length - 1][board[board.length - 1].length - 2] = "Ｇ";
+        }
+    }
+
     public void print() {
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board.length; j++) {
@@ -131,5 +83,4 @@ public class Maker {
             System.out.println();
         }
     }
-
 }
