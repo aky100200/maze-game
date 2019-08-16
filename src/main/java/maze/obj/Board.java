@@ -19,4 +19,12 @@ public class Board {
     public Cells getCell(int x,int y){
         return cells[x][y];
     }
+    public void print(){
+        for (int i = 0; i < maxX; i++) {
+            for (int j = 0; j < maxX; j++) {
+                System.out.print(cells[i][j].getValue());
+            }
+            System.out.println();
+        }
+    }
 }

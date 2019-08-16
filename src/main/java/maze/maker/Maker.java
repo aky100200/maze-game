@@ -8,16 +8,17 @@ import java.util.Random;
 import java.util.stream.IntStream;
 
 public class Maker {
-    Board board;
+    private Board board;
     Random rand = new Random();
 
     public Maker(int x, int y) {
         this.board = new Board(y, x);
     }
 
-    public void make() {
+    public Board makeBoard() {
         makeBase();
         makeWall();
+        return board;
     }
 
     private void makeBase() {
@@ -73,15 +74,6 @@ public class Maker {
             }
             board.setCell(0, 1, Cells.START);
             board.setCell(board.getMaxX() - 1, board.getMaxY() - 2, Cells.GOAL);
-        }
-    }
-
-    public void print() {
-        for (int i = 0; i < board.getMaxX(); i++) {
-            for (int j = 0; j < board.getMaxX(); j++) {
-                System.out.print(board.getCell(i, j).getValue());
-            }
-            System.out.println();
         }
     }
 }
