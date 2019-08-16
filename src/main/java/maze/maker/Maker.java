@@ -1,18 +1,18 @@
 package maze.maker;
 
+import maze.obj.Board;
+import maze.obj.Cells;
+
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.IntStream;
 
 public class Maker {
-    private static final String WALL = "■";
-    private static final String ROAD = "　";
-
-    String[][] board;
+    Board board;
     Random rand = new Random();
 
     public Maker(int x, int y) {
-        this.board = new String[y][x];
+        this.board = new Board(y, x);
     }
 
     public void make() {
@@ -21,27 +21,28 @@ public class Maker {
     }
 
     private void makeBase() {
-        for (int i = 0; i < board.length; i++) {
+        for (int i = 0; i < board.getMaxX(); i++) {
             int ix = i;
-            if (i == 0 || i == (board.length - 1)) {
-                IntStream.range(0, board.length).forEach(iy -> board[ix][iy] = WALL);
+            if (i == 0 || i == (board.getMaxX() - 1)) {
+                IntStream.range(0, board.getMaxX()).forEach(iy -> board.setCell(ix, iy, Cells.WALL));
                 continue;
             }
             if (i % 2 != 0) {
-                board[ix][0] = WALL;
-                IntStream.range(1, board.length - 1).forEach(iy -> board[ix][iy] = ROAD);
-                board[ix][board[ix].length - 1] = WALL;
+                board.setCell(ix, 0, Cells.WALL);
+                IntStream.range(1, board.getMaxX() - 1).forEach(iy -> board.setCell(ix, iy, Cells.ROAD));
+                board.setCell(ix, board.getMaxY() - 1, Cells.WALL);
                 continue;
             }
-            for (int iy = 0; iy < board[ix].length; iy++) {
-                board[ix][iy] = iy % 2 == 0 ? WALL : ROAD;
+            for (int iy = 0; iy < board.getMaxY(); iy++) {
+                Cells cell = iy % 2 == 0 ? Cells.WALL : Cells.ROAD;
+                board.setCell(ix, iy, cell);
             }
         }
     }
 
     private void makeWall() {
-        for (int i = 2; i < board.length - 1; i = i + 2) {
-            for (int j = 2; j < board.length - 1; j = j + 2) {
+        for (int i = 2; i < board.getMaxX() - 1; i = i + 2) {
+            for (int j = 2; j < board.getMaxY() - 1; j = j + 2) {
                 //最初の行以外は上方向へ壁を作成できない
                 int bound = i == 2 ? 4 : 3;
                 while (true) {
@@ -61,24 +62,24 @@ public class Maker {
                             ii = i - 1;
                             break;
                     }
-                    if (ii == board.length
-                            || jj == board[i].length
-                            || Objects.equals(board[ii][jj], WALL)) {
+                    if (ii == board.getMaxX()
+                            || jj == board.getMaxY()
+                            || Objects.equals(board.getCell(ii, jj), Cells.WALL)) {
                         continue;
                     }
-                    board[ii][jj] = WALL;
+                    board.setCell(ii, jj, Cells.WALL);
                     break;
                 }
             }
-            board[0][1] = "Ｓ";
-            board[board.length - 1][board[board.length - 1].length - 2] = "Ｇ";
+            board.setCell(0, 1, Cells.START);
+            board.setCell(board.getMaxX() - 1, board.getMaxY() - 2, Cells.GOAL);
         }
     }
 
     public void print() {
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board.length; j++) {
-                System.out.print(board[i][j]);
+        for (int i = 0; i < board.getMaxX(); i++) {
+            for (int j = 0; j < board.getMaxX(); j++) {
+                System.out.print(board.getCell(i, j).getValue());
             }
             System.out.println();
         }
