@@ -22,19 +22,19 @@ public class Maker {
     }
 
     private void makeBase() {
-        for (int i = 0; i < board.getMaxX(); i++) {
+        for (int i = 0; i < board.getXLength(); i++) {
             int ix = i;
-            if (i == 0 || i == (board.getMaxX() - 1)) {
-                IntStream.range(0, board.getMaxX()).forEach(iy -> board.setCell(ix, iy, Cells.WALL));
+            if (i == 0 || i == (board.getXLength() - 1)) {
+                IntStream.range(0, board.getXLength()).forEach(iy -> board.setCell(ix, iy, Cells.WALL));
                 continue;
             }
             if (i % 2 != 0) {
                 board.setCell(ix, 0, Cells.WALL);
-                IntStream.range(1, board.getMaxX() - 1).forEach(iy -> board.setCell(ix, iy, Cells.ROAD));
-                board.setCell(ix, board.getMaxY() - 1, Cells.WALL);
+                IntStream.range(1, board.getXLength() - 1).forEach(iy -> board.setCell(ix, iy, Cells.ROAD));
+                board.setCell(ix, board.getYLength() - 1, Cells.WALL);
                 continue;
             }
-            for (int iy = 0; iy < board.getMaxY(); iy++) {
+            for (int iy = 0; iy < board.getYLength(); iy++) {
                 Cells cell = iy % 2 == 0 ? Cells.WALL : Cells.ROAD;
                 board.setCell(ix, iy, cell);
             }
@@ -42,8 +42,8 @@ public class Maker {
     }
 
     private void makeWall() {
-        for (int i = 2; i < board.getMaxX() - 1; i = i + 2) {
-            for (int j = 2; j < board.getMaxY() - 1; j = j + 2) {
+        for (int i = 2; i < board.getXLength() - 1; i = i + 2) {
+            for (int j = 2; j < board.getYLength() - 1; j = j + 2) {
                 //最初の行以外は上方向へ壁を作成できない
                 int bound = i == 2 ? 4 : 3;
                 while (true) {
@@ -63,8 +63,8 @@ public class Maker {
                             ii = i - 1;
                             break;
                     }
-                    if (ii == board.getMaxX()
-                            || jj == board.getMaxY()
+                    if (ii == board.getXLength()
+                            || jj == board.getYLength()
                             || Objects.equals(board.getCell(ii, jj), Cells.WALL)) {
                         continue;
                     }
@@ -73,7 +73,7 @@ public class Maker {
                 }
             }
             board.setCell(0, 1, Cells.START);
-            board.setCell(board.getMaxX() - 1, board.getMaxY() - 2, Cells.GOAL);
+            board.setCell(board.getXLength() - 1, board.getYLength() - 2, Cells.GOAL);
         }
     }
 }
